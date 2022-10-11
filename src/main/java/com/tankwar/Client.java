@@ -19,12 +19,16 @@ public class Client extends JComponent {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setTitle("The most boring Tank Game!");
+        //add icon to frame window
+        frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
         //add window to frame
         frame.add(new Client());
         //let the frame adapt to the window dimension
         frame.pack();
         //set frame visible
         frame.setVisible(true);
+        //set frame to the center of window
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//end the program as the window closes
     }
 }
