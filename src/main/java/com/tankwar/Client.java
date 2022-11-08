@@ -11,19 +11,17 @@ public class Client extends JComponent {
 
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN);
-
         //set the window dimension
         this.setPreferredSize(new Dimension(800,600));
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(this.playTank.getImage(),
-                this.playTank.getX(), this.playTank.getY(), null);
+        playTank.draw(g);
     }
 
     public static void main(String[] args) throws InterruptedException {
+
         JFrame frame = new JFrame();
         frame.setTitle("The most boring Tank Game!");
         //add icon to frame window
@@ -41,30 +39,17 @@ public class Client extends JComponent {
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()){
-                    case KeyEvent.VK_UP:
-                        client.playTank.setY(client.playTank.getY()-5);
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        client.playTank.setY(client.playTank.getY()+5);
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        client.playTank.setX(client.playTank.getX()-5);
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        client.playTank.setX(client.playTank.getX()+5);
-                        break;
-                }
+                client.playTank.keyPressed(e);
             }
-
             @Override
             public void keyReleased(KeyEvent e) {
-
+                client.playTank.keyReleased(e);
             }
         });
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//end the program as the window closes
         while (true){
             client.repaint();
+            Thread.sleep(50);
         }
     }
 }
