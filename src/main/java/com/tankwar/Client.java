@@ -6,15 +6,23 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Client extends JComponent {
     private Tank playTank;
 
     private ArrayList<Tank> enemyTank;
 
+    private ArrayList<Wall> walls;
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
         this.enemyTank = new ArrayList<>(12);
+        this.walls = new ArrayList<>();
+        walls.add(new Wall(200,140,true,15));
+        walls.add(new Wall(200,540,true,15));
+        walls.add(new Wall(100,80,false,15));
+        walls.add(new Wall(700,80,false,15));
+        //initiate the enemy tanks
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++) {
                 this.enemyTank.add(new Tank
@@ -27,9 +35,14 @@ public class Client extends JComponent {
 
     @Override
     protected void paintComponent(Graphics g) {
+        g.setColor(Color.cyan);
+        g.fillRect(0,0,800,600);
         playTank.draw(g);
         for (int i = 0; i < enemyTank.size(); i++){
             enemyTank.get(i).draw(g);
+        }
+        for (Wall wall: walls){
+            wall.draw(g);
         }
     }
 
