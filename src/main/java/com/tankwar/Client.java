@@ -35,12 +35,16 @@ public class Client extends JComponent {
 
     @Override
     protected void paintComponent(Graphics g) {
+        //draw background
         g.setColor(Color.cyan);
         g.fillRect(0,0,800,600);
+        //draw player tank
         playTank.draw(g);
+        //draw enemy tank
         for (int i = 0; i < enemyTank.size(); i++){
             enemyTank.get(i).draw(g);
         }
+        //draw wall
         for (Wall wall: walls){
             wall.draw(g);
         }

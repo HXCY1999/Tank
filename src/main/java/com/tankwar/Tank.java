@@ -94,6 +94,14 @@ public class Tank {
     }
     void draw(Graphics g){
         this.determineDirection();
+
+        if(x < 0) x = 0;
+        if(x > 800 - getImage().getWidth(null))
+            x = 800- getImage().getWidth(null);
+        if(y < 0) y = 0;
+        if(y > 600 - getImage().getHeight(null))
+            y =600- getImage().getHeight(null);
+
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
     }
     private boolean up = false, down = false, left = false, right = false;
