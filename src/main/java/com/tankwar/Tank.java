@@ -1,6 +1,7 @@
 package com.tankwar;
 
 import javax.swing.*;
+import javax.xml.bind.annotation.XmlList;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -12,7 +13,7 @@ public class Tank {
 
     private Direction direction;
 
-    private boolean isEnemy;
+    private final boolean isEnemy;
 
     public Tank(int x, int y, Direction direction, boolean isEnemy) {
         this.x = x;
@@ -92,9 +93,14 @@ public class Tank {
         }
         return null;
     }
+
     void draw(Graphics g){
+        int oldX = x;
+        int oldY = y;
+
         this.determineDirection();
 
+        //boundary
         if(x < 0) x = 0;
         if(x > 800 - getImage().getWidth(null))
             x = 800- getImage().getWidth(null);
@@ -102,8 +108,33 @@ public class Tank {
         if(y > 600 - getImage().getHeight(null))
             y =600- getImage().getHeight(null);
 
+        //avoid wall and tank overlap
+        Rectangle rec = this.getRectangle();
+        for(Wall wall : Client.getInstance().getWalls()){
+            if(rec.intersects(wall.getRectangle())){
+                //The wall collided with the tank
+                x = oldX;
+                y = oldY;
+                break;
+            }
+        }
+
+        //avoid tank and enemy tank overlap
+        for(Tank enemy : Client.getInstance().getEnemyTank()){
+            if(rec.intersects(enemy.getRectangle())){
+                x = oldX;
+                y = oldY;
+                break;
+            }
+        }
+
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
     }
+
+    public Rectangle getRectangle(){
+        return new Rectangle(x,y,getImage().getWidth(null),getImage().getHeight(null));
+    }
+
     private boolean up = false, down = false, left = false, right = false;
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
@@ -114,6 +145,7 @@ public class Tank {
         }
         this.move();
     }
+
     private void determineDirection(){
         if(up && left && !down && !right) this.direction = Direction.UPLEFT;
         if(up && right && !left && !down) this.direction = Direction.UPRIGHT;
@@ -132,6 +164,5 @@ public class Tank {
             case  KeyEvent.VK_RIGHT: right = false; break;
         }
         this.move();
-
     }
 }

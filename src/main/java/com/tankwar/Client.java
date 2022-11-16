@@ -9,11 +9,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Client extends JComponent {
-    private Tank playTank;
 
-    private ArrayList<Tank> enemyTank;
+    private static final Client INSTANCE = new Client();
 
-    private ArrayList<Wall> walls;
+    public static Client getInstance(){
+        return INSTANCE;
+    }
+
+    private final Tank playTank;
+
+    private final ArrayList<Tank> enemyTank;
+
+    private final ArrayList<Wall> walls;
+
+    public ArrayList<Wall> getWalls() {
+        return walls;
+    }
+
+    public ArrayList<Tank> getEnemyTank() {
+        return enemyTank;
+    }
+
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
         this.enemyTank = new ArrayList<>(12);
@@ -41,8 +57,8 @@ public class Client extends JComponent {
         //draw player tank
         playTank.draw(g);
         //draw enemy tank
-        for (int i = 0; i < enemyTank.size(); i++){
-            enemyTank.get(i).draw(g);
+        for (Tank tank : enemyTank) {
+            tank.draw(g);
         }
         //draw wall
         for (Wall wall: walls){
