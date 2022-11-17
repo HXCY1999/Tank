@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Client extends JComponent {
 
@@ -22,6 +23,8 @@ public class Client extends JComponent {
 
     private final ArrayList<Wall> walls;
 
+    private List<Missile> missiles;
+
     public ArrayList<Wall> getWalls() {
         return walls;
     }
@@ -30,10 +33,15 @@ public class Client extends JComponent {
         return enemyTank;
     }
 
+    public List<Missile> getMissiles() {
+        return missiles;
+    }
+
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
         this.enemyTank = new ArrayList<>(12);
         this.walls = new ArrayList<>();
+        this.missiles = new ArrayList<>();
         walls.add(new Wall(200,140,true,15));
         walls.add(new Wall(200,540,true,15));
         walls.add(new Wall(100,80,false,15));
@@ -64,6 +72,9 @@ public class Client extends JComponent {
         for (Wall wall: walls){
             wall.draw(g);
         }
+        for (Missile missile : missiles){
+            missile.draw(g);
+        }
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -73,7 +84,7 @@ public class Client extends JComponent {
         //add icon to frame window
         frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
         //add window to frame
-        Client client = new Client();
+        Client client =Client.getInstance();
         frame.add(client);
         //let the frame adapt to the window dimension
         frame.pack();

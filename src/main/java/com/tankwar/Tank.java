@@ -138,12 +138,27 @@ public class Tank {
     private boolean up = false, down = false, left = false, right = false;
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
-            case  KeyEvent.VK_UP: up = true; break;
-            case  KeyEvent.VK_DOWN: down = true; break;
-            case  KeyEvent.VK_LEFT: left = true; break;
-            case  KeyEvent.VK_RIGHT: right = true; break;
+            case  KeyEvent.VK_UP: up = true;
+            this.move();
+                break;
+            case  KeyEvent.VK_DOWN: down = true;
+                this.move();
+                break;
+            case  KeyEvent.VK_LEFT: left = true;
+                this.move();
+                break;
+            case  KeyEvent.VK_RIGHT: right = true;
+                this.move();
+                break;
+            case KeyEvent.VK_CONTROL:fire(); break;
         }
-        this.move();
+
+    }
+
+    private void fire() {
+        Missile missile = new Missile(x+getImage().getWidth(null)/2 - 6,
+                y+getImage().getHeight(null)/2 - 6,isEnemy,this.direction);
+        Client.getInstance().getMissiles().add(missile);
     }
 
     private void determineDirection(){
@@ -163,6 +178,5 @@ public class Tank {
             case  KeyEvent.VK_LEFT: left = false; break;
             case  KeyEvent.VK_RIGHT: right = false; break;
         }
-        this.move();
     }
 }
