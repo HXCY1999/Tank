@@ -1,9 +1,14 @@
 package com.tankwar;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import javax.swing.*;
 import javax.xml.bind.annotation.XmlList;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.Random;
 
 public class Tank {
 
@@ -151,14 +156,33 @@ public class Tank {
                 this.move();
                 break;
             case KeyEvent.VK_CONTROL:fire(); break;
+            case KeyEvent.VK_A:superFire(); break;
         }
 
+    }
+    private void superFire() {
+        for (Direction direction : Direction.values()) {
+            Missile missile = new Missile(x + getImage().getWidth(null) / 2 - 6,
+                    y + getImage().getHeight(null) / 2 - 6, isEnemy, direction);
+            Client.getInstance().getMissiles().add(missile);
+        }
+        //set two kinds of audio randomly generate
+        String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
+        playAudio(audioFile);
+    }
+
+    private void playAudio(String fineName) {
+        Media sound = new Media(new File("assets/audios/"+fineName).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
     }
 
     private void fire() {
         Missile missile = new Missile(x+getImage().getWidth(null)/2 - 6,
                 y+getImage().getHeight(null)/2 - 6,isEnemy,this.direction);
         Client.getInstance().getMissiles().add(missile);
+
+        playAudio("shoot.wav");
     }
 
     private void determineDirection(){

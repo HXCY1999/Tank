@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.sun.javafx.application.PlatformImpl.startup;
+
 public class Client extends JComponent {
 
     private static final Client INSTANCE = new Client();
@@ -78,7 +80,7 @@ public class Client extends JComponent {
     }
 
     public static void main(String[] args) throws InterruptedException {
-
+        com.sun.javafx.application.PlatformImpl.startup(()->{});
         JFrame frame = new JFrame();
         frame.setTitle("The most boring Tank Game!");
         //add icon to frame window
