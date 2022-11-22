@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TankTest {
 
     @Test
-    void getImage() {
+    void getImage() { // test if can get the image
         for (Direction direction : Direction.values()){
             Tank tank = new Tank(0,0,direction,false);
             assertTrue(tank.getImage().getWidth(null) > 0,
