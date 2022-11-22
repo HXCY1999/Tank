@@ -20,6 +20,8 @@ public class Tank {
 
     private final boolean isEnemy;
 
+    private final int speed = 10;
+
     public Tank(int x, int y, Direction direction, boolean isEnemy) {
         this.x = x;
         this.y = y;
@@ -28,36 +30,38 @@ public class Tank {
     }
 
     void move(){
-        switch (direction){
-            case UP:
-                y-=5;
-                break;
-            case DOWN:
-                y+=5;
-                break;
-            case LEFT:
-                x-=5;
-                break;
-            case RIGHT:
-                x+=5;
-                break;
-            case LEFT_UP:
-                y-=5;
-                x-=5;
-                break;
-            case RIGHT_UP:
-                y-=5;
-                x+=5;
-                break;
-            case LEFT_DOWN:
-                y+=5;
-                x-=5;
-                break;
-            case RIGHT_DOWN:
-                y+=5;
-                x+=5;
-                break;
-        }
+        x = x + direction.xFactor * speed;
+        y = y + direction.yFactor * speed;
+//        switch (direction){
+//            case UP:
+//                y-=speed;
+//                break;
+//            case DOWN:
+//                y+=speed;
+//                break;
+//            case LEFT:
+//                x-=speed;
+//                break;
+//            case RIGHT:
+//                x+=speed;
+//                break;
+//            case LEFT_UP:
+//                y-=speed;
+//                x-=speed;
+//                break;
+//            case RIGHT_UP:
+//                y-=speed;
+//                x+=speed;
+//                break;
+//            case LEFT_DOWN:
+//                y+=speed;
+//                x-=speed;
+//                break;
+//            case RIGHT_DOWN:
+//                y+=speed;
+//                x+=speed;
+//                break;
+//        }
     }
 
     public void setX(int x) {
@@ -86,7 +90,7 @@ public class Tank {
 
     Image getImage(){
         String prefix = isEnemy ? "e" : "";
-        return direction.getImage(prefix + "tank");
+        return direction.getImage(prefix + "tank"); //use enum to simplify code
 //        switch (direction){
 //            case UP: return Tools.getImage("tankU.gif");
 //            case DOWN: return Tools.getImage("tankD.gif");
