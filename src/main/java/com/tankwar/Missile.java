@@ -38,42 +38,18 @@ public class Missile {
 
     public void draw(Graphics g) {
         move();
-        if(x < 0 || x > 800 || y < 0 || y > 600) return;
+        if(x < 0 || x > 800 || y < 0 || y > 600) return; // boundary
+
         g.drawImage(getImage(),x,y,null);
+
+    }
+
+    Rectangle getRectangle(){
+        return new Rectangle(x,y,getImage().getWidth(null),getImage().getHeight(null));
     }
 
     void move(){
         x += direction.xFactor * SPEED;
         y += direction.yFactor * SPEED;
-//        switch (direction){
-//            case UP:
-//                y-=SPEED;
-//                break;
-//            case DOWN:
-//                y+=SPEED;
-//                break;
-//            case LEFT:
-//                x-=SPEED;
-//                break;
-//            case RIGHT:
-//                x+=SPEED;
-//                break;
-//            case LEFT_UP:
-//                y-=SPEED;
-//                x-=SPEED;
-//                break;
-//            case RIGHT_UP:
-//                y-=SPEED;
-//                x+=SPEED;
-//                break;
-//            case LEFT_DOWN:
-//                y+=SPEED;
-//                x-=SPEED;
-//                break;
-//            case RIGHT_DOWN:
-//                y+=SPEED;
-//                x+=SPEED;
-//                break;
-//        }
     }
 }
