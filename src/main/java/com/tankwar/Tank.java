@@ -16,13 +16,37 @@ public class Tank {
 
     private int y;
 
+    private boolean live = true;
+
+    private int HP = 100;
+
+    public void setHP(int HP) {
+        this.HP = HP;
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
     private Direction direction;
+
+     boolean isLive() {
+        return live;
+    }
+
+     void setLive(boolean live) {
+        this.live = live;
+    }
 
     private final boolean isEnemy;
 
     private final int speed = 10;
 
-    public Tank(int x, int y, Direction direction, boolean isEnemy) {
+    public boolean isEnemy() {
+        return isEnemy;
+    }
+
+     Tank(int x, int y, Direction direction, boolean isEnemy) {
         this.x = x;
         this.y = y;
         this.direction = direction;
@@ -105,6 +129,9 @@ public class Tank {
     }
 
     void draw(Graphics g){
+
+        if(!this.isLive()) return;
+
         int oldX = x;
         int oldY = y;
 
@@ -119,9 +146,9 @@ public class Tank {
             y =600- getImage().getHeight(null);
 
         //avoid wall and tank overlap
-        Rectangle rec = this.getRectangle();
+        Rectangle rectangle = this.getRectangle();
         for(Wall wall : Client.getInstance().getWalls()){
-            if(rec.intersects(wall.getRectangle())){
+            if(rectangle.intersects(wall.getRectangle())){
                 //The wall collided with the tank
                 x = oldX;
                 y = oldY;
@@ -131,7 +158,7 @@ public class Tank {
 
         //avoid tank and enemy tank overlap
         for(Tank enemy : Client.getInstance().getEnemyTank()){
-            if(rec.intersects(enemy.getRectangle())){
+            if(rectangle.intersects(enemy.getRectangle())){
                 x = oldX;
                 y = oldY;
                 break;

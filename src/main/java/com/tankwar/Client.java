@@ -21,11 +21,27 @@ public class Client extends JComponent {
 
     private final Tank playTank;
 
-    private final ArrayList<Tank> enemyTank;
+    public Tank getPlayTank() {
+        return playTank;
+    }
+
+    private  ArrayList<Tank> enemyTank;
 
     private final ArrayList<Wall> walls;
 
     private List<Missile> missiles;
+
+    synchronized void add(Missile missile){
+        missiles.add(missile);
+    }
+
+    synchronized void removeMissile(Missile missile){
+        missiles.remove(missile);
+    }
+
+    synchronized void removeEnemyTank(Tank enemyTank){
+        this.enemyTank.remove(enemyTank);
+    }
 
     public ArrayList<Wall> getWalls() {
         return walls;
@@ -65,15 +81,18 @@ public class Client extends JComponent {
         g.setColor(Color.cyan);
         g.fillRect(0,0,800,600);
         //draw player tank
-        playTank.draw(g);
-        //draw enemy tank
+        if(playTank.isLive()) playTank.draw(g);
+        //draw enemy tanks
+        enemyTank.removeIf(tank -> !tank.isLive());
         for (Tank tank : enemyTank) {
             tank.draw(g);
         }
-        //draw wall
+        //draw all the walls
         for (Wall wall: walls){
             wall.draw(g);
         }
+        //draw every missile
+        missiles.removeIf(missile -> !missile.isLive());//missile die remove from list
         for (Missile missile : missiles){
             missile.draw(g);
         }

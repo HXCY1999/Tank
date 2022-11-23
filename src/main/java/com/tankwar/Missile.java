@@ -1,12 +1,24 @@
 package com.tankwar;
 
+import sun.security.util.Length;
+
 import java.awt.*;
 
 public class Missile {
 
     private int x;
 
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
     private int y;
+
+    private boolean live = true;
 
     private final boolean enemy;
 
@@ -38,7 +50,41 @@ public class Missile {
 
     public void draw(Graphics g) {
         move();
-        if(x < 0 || x > 800 || y < 0 || y > 600) return; // boundary
+
+        if(x < 0 || x > 800 || y < 0 || y > 600) {// boundary of frame
+            setLive(false);
+            return;//stop drawing
+        }
+
+        //when missile shot on the wall
+        Rectangle rectangle = this.getRectangle();
+        for (Wall wall : Client.getInstance().getWalls()){
+            if(rectangle.intersects(wall.getRectangle())){
+                setLive(false);
+                return;
+            }
+        }
+
+        //when the missile shot on the tank
+        if(enemy){//enemy's missile hit on player's tank
+            Tank playTank = Client.getInstance().getPlayTank();
+            if(rectangle.intersects(playTank.getRectangle())){
+                playTank.setHP(playTank.getHP() - 20);
+                if(playTank.getHP() <=0 ) playTank.setLive(false);//play tank die
+                setLive(false);
+                return;//stop drawing the missile
+            }
+        }else {//player's tank's missile hit on enemy tanks
+            //traversal every tank see if missile hit on the tank
+            for (Tank enemyTank : Client.getInstance().getEnemyTank()){
+                if(rectangle.intersects(enemyTank.getRectangle())){
+                    enemyTank.setLive(false);//tank is hit and die
+                    Client.getInstance().removeEnemyTank(enemyTank);//remove the tank
+                    setLive(false);
+                    break;//if hit on the tank stop traversal
+                }
+            }
+        }
 
         g.drawImage(getImage(),x,y,null);
 
