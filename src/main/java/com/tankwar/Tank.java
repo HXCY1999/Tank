@@ -56,36 +56,6 @@ public class Tank {
     void move(){
         x = x + direction.xFactor * speed;
         y = y + direction.yFactor * speed;
-//        switch (direction){
-//            case UP:
-//                y-=speed;
-//                break;
-//            case DOWN:
-//                y+=speed;
-//                break;
-//            case LEFT:
-//                x-=speed;
-//                break;
-//            case RIGHT:
-//                x+=speed;
-//                break;
-//            case LEFT_UP:
-//                y-=speed;
-//                x-=speed;
-//                break;
-//            case RIGHT_UP:
-//                y-=speed;
-//                x+=speed;
-//                break;
-//            case LEFT_DOWN:
-//                y+=speed;
-//                x-=speed;
-//                break;
-//            case RIGHT_DOWN:
-//                y+=speed;
-//                x+=speed;
-//                break;
-//        }
     }
 
     public void setX(int x) {
@@ -200,21 +170,16 @@ public class Tank {
         }
         //set two kinds of audio randomly generate
         String audioFile = new Random().nextBoolean() ? "supershoot.aiff" : "supershoot.wav";
-        playAudio(audioFile);
+        Tools.playAudio(audioFile);
     }
 
-    private void playAudio(String fineName) {
-        Media sound = new Media(new File("assets/audios/"+fineName).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
-    }
 
     private void fire() {
         Missile missile = new Missile(x+getImage().getWidth(null)/2 - 6,
                 y+getImage().getHeight(null)/2 - 6,isEnemy,this.direction);
         Client.getInstance().getMissiles().add(missile);
 
-        playAudio("shoot.wav");
+        Tools.playAudio("shoot.wav");
     }
 
     private void determineDirection(){

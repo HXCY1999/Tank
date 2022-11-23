@@ -69,6 +69,7 @@ public class Missile {
         if(enemy){//enemy's missile hit on player's tank
             Tank playTank = Client.getInstance().getPlayTank();
             if(rectangle.intersects(playTank.getRectangle())){
+                addExplosion();//add explosion gif
                 playTank.setHP(playTank.getHP() - 20);
                 if(playTank.getHP() <=0 ) playTank.setLive(false);//play tank die
                 setLive(false);
@@ -78,6 +79,7 @@ public class Missile {
             //traversal every tank see if missile hit on the tank
             for (Tank enemyTank : Client.getInstance().getEnemyTank()){
                 if(rectangle.intersects(enemyTank.getRectangle())){
+                    addExplosion();
                     enemyTank.setLive(false);//tank is hit and die
                     Client.getInstance().removeEnemyTank(enemyTank);//remove the tank
                     setLive(false);
@@ -88,6 +90,12 @@ public class Missile {
 
         g.drawImage(getImage(),x,y,null);
 
+    }
+
+    private void addExplosion(){
+        Client.getInstance().addExplosion(new Explosion(x,y));//add explosion object
+
+        Tools.playAudio("explode.wav");
     }
 
     Rectangle getRectangle(){

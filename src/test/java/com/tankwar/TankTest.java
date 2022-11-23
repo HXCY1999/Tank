@@ -2,6 +2,8 @@ package com.tankwar;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TankTest {
@@ -18,6 +20,5 @@ class TankTest {
                     direction + "get get valid image!");
 
         }
-
     }
 }

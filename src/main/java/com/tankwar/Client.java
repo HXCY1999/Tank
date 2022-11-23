@@ -31,17 +31,7 @@ public class Client extends JComponent {
 
     private List<Missile> missiles;
 
-    synchronized void add(Missile missile){
-        missiles.add(missile);
-    }
-
-    synchronized void removeMissile(Missile missile){
-        missiles.remove(missile);
-    }
-
-    synchronized void removeEnemyTank(Tank enemyTank){
-        this.enemyTank.remove(enemyTank);
-    }
+    private List<Explosion> explosions;
 
     public ArrayList<Wall> getWalls() {
         return walls;
@@ -55,24 +45,45 @@ public class Client extends JComponent {
         return missiles;
     }
 
+    void addExplosion(Explosion explosion){
+        explosions.add(explosion);
+    }
+
+    synchronized void removeMissile(Missile missile){
+        missiles.remove(missile);
+    }
+
+    synchronized void removeEnemyTank(Tank enemyTank) {
+        this.enemyTank.remove(enemyTank);
+    }
+
+    synchronized void add(Missile missile){
+        missiles.add(missile);
+    }
+
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
-        this.enemyTank = new ArrayList<>(12);
         this.walls = new ArrayList<>();
         this.missiles = new ArrayList<>();
+        this.explosions = new ArrayList<>();
         walls.add(new Wall(200,140,true,15));
         walls.add(new Wall(200,540,true,15));
         walls.add(new Wall(100,80,false,15));
         walls.add(new Wall(700,80,false,15));
         //initiate the enemy tanks
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 4; j++) {
-                this.enemyTank.add(new Tank
-                        (200 + j* 80, 400 + 40 * i,Direction.UP,true));
-            }
-        }
+        initiateEnemyTank();
         //set the window dimension
         this.setPreferredSize(new Dimension(800,600));
+    }
+
+    private void initiateEnemyTank() {
+        this.enemyTank = new ArrayList<>(12);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                this.enemyTank.add(new Tank
+                        (200 + j * 80, 400 + 40 * i, Direction.UP, true));
+            }
+        }
     }
 
     @Override
@@ -83,7 +94,8 @@ public class Client extends JComponent {
         //draw player tank
         if(playTank.isLive()) playTank.draw(g);
         //draw enemy tanks
-        enemyTank.removeIf(tank -> !tank.isLive());
+        if (enemyTank.isEmpty()) initiateEnemyTank(); // if all tanks die, re-initiate them
+        enemyTank.removeIf(tank -> !tank.isLive());//when tank die remove from list
         for (Tank tank : enemyTank) {
             tank.draw(g);
         }
@@ -96,6 +108,12 @@ public class Client extends JComponent {
         for (Missile missile : missiles){
             missile.draw(g);
         }
+        //draw explosion
+        explosions.removeIf(explosion -> !explosion.isLive());
+        for (Explosion explosion : explosions) {
+            explosion.draw(g);
+        }
+
     }
 
     public static void main(String[] args) throws InterruptedException {
