@@ -200,4 +200,18 @@ public class Tank {
             case  KeyEvent.VK_RIGHT: right = false; break;
         }
     }
+
+    private int step = new Random().nextInt(12) + 3;//control the frequency of shooting
+    void addRandomlyMove() {
+        Direction[] dirs = Direction.values();
+        if(step == 0){//if step is 0, shoot!
+            step = new Random().nextInt(12) + 3;//set frequency again 
+            this.direction = dirs[new Random().nextInt(dirs.length)]; //randomly direction
+            if(new Random().nextBoolean()){//fire randomly
+                this.fire();
+            }
+        }
+        step--;
+
+    }
 }

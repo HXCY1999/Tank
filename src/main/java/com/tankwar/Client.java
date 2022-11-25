@@ -145,6 +145,9 @@ public class Client extends JComponent {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//end the program as the window closes
         while (true){
             client.repaint();
+            for (Tank enemyTank : client.enemyTank){
+                enemyTank.addRandomlyMove();
+            }
             Thread.sleep(50);
         }
     }
