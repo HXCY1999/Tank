@@ -105,7 +105,14 @@ public class Tank {
         int oldX = x;
         int oldY = y;
 
-        this.determineDirection();
+        //only determine direction for player tank
+        if(!this.isEnemy) this.determineDirection();
+
+        //the stop is false initially
+        //after determinate direction player thank is stopped
+        //after press key stop variable can be false so player tank can move
+        //no determinate direction of enemy tank so enemy tank can move
+        if(!stopped) this.move();
 
         //boundary
         if(x < 0) x = 0;
@@ -126,13 +133,19 @@ public class Tank {
             }
         }
 
-        //avoid tank and enemy tank overlap
+        //avoid enemy tank and enemy tank overlap
         for(Tank enemy : Client.getInstance().getEnemyTank()){
-            if(rectangle.intersects(enemy.getRectangle())){
+            if(enemy != this && rectangle.intersects(enemy.getRectangle())){
                 x = oldX;
                 y = oldY;
                 break;
             }
+        }
+        // enemy tank hit player tank
+        if(this.isEnemy && rectangle.intersects(Client.getInstance()
+                .getPlayTank().getRectangle())){
+            x = oldX;
+            y = oldY;
         }
 
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
@@ -146,16 +159,12 @@ public class Tank {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
             case  KeyEvent.VK_UP: up = true;
-            this.move();
                 break;
             case  KeyEvent.VK_DOWN: down = true;
-                this.move();
                 break;
             case  KeyEvent.VK_LEFT: left = true;
-                this.move();
                 break;
             case  KeyEvent.VK_RIGHT: right = true;
-                this.move();
                 break;
             case KeyEvent.VK_CONTROL:fire(); break;
             case KeyEvent.VK_A:superFire(); break;
@@ -182,15 +191,23 @@ public class Tank {
         Tools.playAudio("shoot.wav");
     }
 
+    private boolean stopped = false;
+
     private void determineDirection(){
-        if(up && left && !down && !right) this.direction = Direction.LEFT_UP;
-        if(up && right && !left && !down) this.direction = Direction.RIGHT_UP;
-        if(down && left && !up && !right) this.direction = Direction.LEFT_DOWN;
-        if(down && right && !up && !left) this.direction = Direction.RIGHT_DOWN;
-        if(up && !left && !down && !right) this.direction = Direction.UP;
-        if(!up && left && !down && !right) this.direction = Direction.LEFT;
-        if(!up && !left && down && !right) this.direction = Direction.DOWN;
-        if(!up && !left && !down && right) this.direction = Direction.RIGHT;
+
+        //initially set the tank still not move automatically
+        if(!up && !right && !down && !left) this.stopped = true;
+        else {
+            if (up && left && !down && !right) this.direction = Direction.LEFT_UP;
+            if (up && right && !left && !down) this.direction = Direction.RIGHT_UP;
+            if (down && left && !up && !right) this.direction = Direction.LEFT_DOWN;
+            if (down && right && !up && !left) this.direction = Direction.RIGHT_DOWN;
+            if (up && !left && !down && !right) this.direction = Direction.UP;
+            if (!up && left && !down && !right) this.direction = Direction.LEFT;
+            if (!up && !left && down && !right) this.direction = Direction.DOWN;
+            if (!up && !left && !down && right) this.direction = Direction.RIGHT;
+            this.stopped = false;
+        }
     }
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()){
@@ -201,13 +218,15 @@ public class Tank {
         }
     }
 
-    private int step = new Random().nextInt(12) + 3;//control the frequency of shooting
+    private final Random random = new Random();
+
+    private int step = random.nextInt(12) + 3;//control the frequency of shooting
     void addRandomlyMove() {
         Direction[] dirs = Direction.values();
         if(step == 0){//if step is 0, shoot!
-            step = new Random().nextInt(12) + 3;//set frequency again 
-            this.direction = dirs[new Random().nextInt(dirs.length)]; //randomly direction
-            if(new Random().nextBoolean()){//fire randomly
+            step = random.nextInt(12) + 3;//set frequency again
+            this.direction = dirs[random.nextInt(dirs.length)]; //randomly direction
+            if(random.nextBoolean()){//fire randomly,used to decrease fire frequency
                 this.fire();
             }
         }

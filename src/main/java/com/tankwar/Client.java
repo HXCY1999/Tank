@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.sun.javafx.application.PlatformImpl.startup;
 
@@ -64,7 +65,10 @@ public class Client extends JComponent {
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
         this.walls = new ArrayList<>();
-        this.missiles = new ArrayList<>();
+        // the missile object run in two thread:main and paintComponent thread
+        // so use this list to keep its thread safety
+        //because the missile is modifying in main thread and be written in another thread
+        this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new ArrayList<>();
         walls.add(new Wall(200,140,true,15));
         walls.add(new Wall(200,540,true,15));
@@ -103,6 +107,8 @@ public class Client extends JComponent {
         for (Wall wall: walls){
             wall.draw(g);
         }
+
+//        System.out.println(Thread.currentThread().getName());
         //draw every missile
         missiles.removeIf(missile -> !missile.isLive());//missile die remove from list
         for (Missile missile : missiles){
@@ -144,6 +150,7 @@ public class Client extends JComponent {
         });
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//end the program as the window closes
         while (true){
+//            System.out.println(Thread.currentThread().getName());
             client.repaint();
             for (Tank enemyTank : client.enemyTank){
                 enemyTank.addRandomlyMove();
