@@ -148,6 +148,15 @@ public class Tank {
             y = oldY;
         }
 
+        //add HP bar for player tank
+        if(!isEnemy){
+            g.setColor(Color.white);
+            g.drawRect(x,y - 10,this.getImage().getWidth(null),10);
+
+            g.setColor(Color.red);
+            int width = HP * this.getImage().getWidth(null) / 100;
+            g.fillRect(x,y - 10,width,10);
+        }
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
     }
 
@@ -168,6 +177,7 @@ public class Tank {
                 break;
             case KeyEvent.VK_CONTROL:fire(); break;
             case KeyEvent.VK_A:superFire(); break;
+            case KeyEvent.VK_F2:Client.getInstance().restart();break;
         }
 
     }
@@ -220,7 +230,7 @@ public class Tank {
 
     private final Random random = new Random();
 
-    private int step = random.nextInt(12) + 3;//control the frequency of shooting
+    private int step = random.nextInt(12) + 3 ;//control the frequency of shooting
     void addRandomlyMove() {
         Direction[] dirs = Direction.values();
         if(step == 0){//if step is 0, shoot!
