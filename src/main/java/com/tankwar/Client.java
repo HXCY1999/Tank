@@ -4,13 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static com.sun.javafx.application.PlatformImpl.startup;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client extends JComponent {
 
@@ -26,19 +23,21 @@ public class Client extends JComponent {
         return playTank;
     }
 
-    private  ArrayList<Tank> enemyTank;
+    private final AtomicInteger enemyKilled = new AtomicInteger(0);
+
+    private CopyOnWriteArrayList<Tank> enemyTank;
 
     private final ArrayList<Wall> walls;
 
-    private List<Missile> missiles;
+    private final List<Missile> missiles;
 
-    private List<Explosion> explosions;
+    private final List<Explosion> explosions;
 
     public ArrayList<Wall> getWalls() {
         return walls;
     }
 
-    public ArrayList<Tank> getEnemyTank() {
+    public CopyOnWriteArrayList<Tank> getEnemyTank() {
         return enemyTank;
     }
 
@@ -72,8 +71,8 @@ public class Client extends JComponent {
         this.explosions = new ArrayList<>();
         walls.add(new Wall(200,140,true,15));
         walls.add(new Wall(200,540,true,15));
-        walls.add(new Wall(100,80,false,15));
-        walls.add(new Wall(700,80,false,15));
+        walls.add(new Wall(100,160,false,12));
+        walls.add(new Wall(700,160,false,12));
         //initiate the enemy tanks
         initiateEnemyTank();
         //set the window dimension
@@ -81,7 +80,7 @@ public class Client extends JComponent {
     }
 
     private void initiateEnemyTank() {
-        this.enemyTank = new ArrayList<>(12);
+        this.enemyTank = new CopyOnWriteArrayList<Tank>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
                 this.enemyTank.add(new Tank
@@ -103,11 +102,26 @@ public class Client extends JComponent {
             g.setFont(new Font(null,Font.BOLD,60));
             g.drawString("PRESS F2 TO RESTART",60,360);
         }else {
+            g.setColor(Color.white);
+            g.setFont(new Font(null,Font.BOLD,16));
+            g.drawString("Missiles: " + missiles.size(),10,50);
+            g.drawString("Explosions: " + explosions.size(),10,70);
+            g.drawString("Player Tank HP: " + playTank.getHP(),10,90);
+            g.drawString("Enemy left: " + enemyTank.size(),10,110);
+            g.drawString("Enemy killed " + enemyKilled.get(),10,130);
+
+
+
+
             //draw player tank
             if (playTank.isLive()) playTank.draw(g);
             //draw enemy tanks
             if (enemyTank.isEmpty()) initiateEnemyTank(); // if all tanks die, re-initiate them
+
+            int count = enemyTank.size();
             enemyTank.removeIf(tank -> !tank.isLive());//when tank die remove from list
+            enemyKilled.addAndGet(count - enemyTank.size());
+
             for (Tank tank : enemyTank) {
                 tank.draw(g);
             }
@@ -160,14 +174,18 @@ public class Client extends JComponent {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//end the program as the window closes
         while (true) {
 //            System.out.println(Thread.currentThread().getName());
-
-            client.repaint();
-            if (client.playTank.isLive()) {
-                for (Tank enemyTank : client.enemyTank) {
-                    enemyTank.addRandomlyMove();
+            try {
+                client.repaint();
+                if (client.playTank.isLive()) {
+                    for (Tank enemyTank : client.enemyTank) {
+                        enemyTank.addRandomlyMove();
+                    }
+                    Thread.sleep(50);
                 }
-                Thread.sleep(50);
+            }catch (Exception e){
+                e.printStackTrace();
             }
+
         }
     }
 
