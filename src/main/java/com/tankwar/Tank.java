@@ -156,12 +156,30 @@ public class Tank {
             g.setColor(Color.red);
             int width = HP * this.getImage().getWidth(null) / 100;
             g.fillRect(x,y - 10,width,10);
+
+            Image petImage = Tools.getImage("pet-camel.gif");
+            g.drawImage(petImage,
+                    this.x - petImage.getWidth(null) - DISTANCE_TO_PET,
+                    this.y,null);
+
         }
         g.drawImage(this.getImage(), this.getX(), this.getY(), null);
     }
 
+    private static final int DISTANCE_TO_PET = 4;
+
     public Rectangle getRectangle(){
+        if(isEnemy)
         return new Rectangle(x,y,getImage().getWidth(null),getImage().getHeight(null));
+        else{
+            Image petImage = Tools.getImage("pet-camel.gif");
+            final int delta = petImage.getWidth(null
+            ) + DISTANCE_TO_PET;
+            return new Rectangle(x,y,
+                    getImage().getWidth(null) + delta,
+                    getImage().getHeight(null));
+
+        }
     }
 
     private boolean up = false, down = false, left = false, right = false;

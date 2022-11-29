@@ -69,8 +69,8 @@ public class Client extends JComponent {
         //because the missile is modifying in main thread and be written in another thread
         this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new ArrayList<>();
-        walls.add(new Wall(200,140,true,15));
-        walls.add(new Wall(200,540,true,15));
+        walls.add(new Wall(280,140,true,12));
+        walls.add(new Wall(280,540,true,12));
         walls.add(new Wall(100,160,false,12));
         walls.add(new Wall(700,160,false,12));
         //initiate the enemy tanks
@@ -109,6 +109,8 @@ public class Client extends JComponent {
             g.drawString("Player Tank HP: " + playTank.getHP(),10,90);
             g.drawString("Enemy left: " + enemyTank.size(),10,110);
             g.drawString("Enemy killed " + enemyKilled.get(),10,130);
+            g.drawImage(Tools.getImage("tree.png"),720,10,null);
+            g.drawImage(Tools.getImage("tree.png"),10,520,null);
 
 
 
