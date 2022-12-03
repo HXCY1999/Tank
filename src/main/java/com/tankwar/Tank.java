@@ -175,7 +175,7 @@ public class Tank {
             Image petImage = Tools.getImage("pet-camel.gif");
             final int delta = petImage.getWidth(null
             ) + DISTANCE_TO_PET;
-            return new Rectangle(x,y,
+            return new Rectangle(x - delta,y,
                     getImage().getWidth(null) + delta,
                     getImage().getHeight(null));
 

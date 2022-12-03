@@ -17,6 +17,8 @@ public class Client extends JComponent {
         return INSTANCE;
     }
 
+    private AidKit aidKit;
+
     private Tank playTank;
 
     public Tank getPlayTank() {
@@ -64,6 +66,7 @@ public class Client extends JComponent {
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
         this.walls = new ArrayList<>();
+        this.aidKit = new AidKit(400,250);
         // the missile object run in two thread:main and paintComponent thread
         // so use this list to keep its thread safety
         //because the missile is modifying in main thread and be written in another thread
@@ -95,6 +98,7 @@ public class Client extends JComponent {
         g.setColor(Color.BLACK);
         g.fillRect(0,0,800,600);
 
+
         if(!playTank.isLive()){
             g.setColor(Color.RED );
             g.setFont(new Font(null,Font.BOLD,100));
@@ -112,9 +116,8 @@ public class Client extends JComponent {
             g.drawImage(Tools.getImage("tree.png"),720,10,null);
             g.drawImage(Tools.getImage("tree.png"),10,520,null);
 
-
-
-
+            //draw aid kit
+            if(aidKit.isLive()) aidKit.draw(g);
             //draw player tank
             if (playTank.isLive()) playTank.draw(g);
             //draw enemy tanks
