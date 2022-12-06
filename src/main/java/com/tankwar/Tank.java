@@ -1,9 +1,11 @@
 package com.tankwar;
 
+import com.sun.org.apache.bcel.internal.generic.FALOAD;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import javax.swing.*;
+import javax.swing.text.Position;
 import javax.xml.bind.annotation.XmlList;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,13 +14,19 @@ import java.util.Random;
 
 public class Tank {
 
+    Save.Position getPosition(){
+        return new Save.Position(x,y,direction);
+    }
+
     private int x;
 
     private int y;
 
+    private final int MAX_HP = 100;
+
     private boolean live = true;
 
-    private int HP = 100;
+    private int HP = MAX_HP;
 
     public void setHP(int HP) {
         this.HP = HP;
@@ -148,13 +156,23 @@ public class Tank {
             y = oldY;
         }
 
+
+
+
         //add HP bar for player tank
         if(!isEnemy){
+
+                if (Client.getInstance().getAidKit().isLive() && this.getRectangle().intersects(Client.getInstance().getAidKit().getRectangle())) {
+                    this.setHP(MAX_HP);
+                    Tools.playAudio("revive.wav");
+                    Client.getInstance().getAidKit().setLive(false);
+                }
+
             g.setColor(Color.white);
             g.drawRect(x,y - 10,this.getImage().getWidth(null),10);
 
             g.setColor(Color.red);
-            int width = HP * this.getImage().getWidth(null) / 100;
+            int width = HP * this.getImage().getWidth(null) / MAX_HP;
             g.fillRect(x,y - 10,width,10);
 
             Image petImage = Tools.getImage("pet-camel.gif");
@@ -260,5 +278,9 @@ public class Tank {
         }
         step--;
 
+    }
+
+    boolean isDying(){
+        return this.HP <= MAX_HP * 0.2;
     }
 }

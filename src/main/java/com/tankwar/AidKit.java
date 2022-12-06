@@ -6,6 +6,7 @@ public class AidKit {
 
     private  int x ,y;
 
+    private final Image image = Tools.getImage("blood.png");;
 
     private boolean live = true;
 
@@ -16,6 +17,8 @@ public class AidKit {
         this.live = live;
     }
 
+
+
     public boolean isLive() {
         return live;
     }
@@ -24,16 +27,14 @@ public class AidKit {
         this.live = live;
     }
 
-    public AidKit(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
 
     void  draw(Graphics g){
-        g.drawImage(Tools.getImage("blood.png"), x,y,null);
+        g.drawImage(image, x,y,null);
 
     }
 
 
-
+    public Rectangle getRectangle() {
+        return new Rectangle(x,y,image.getWidth(null),image.getHeight(null));
+    }
 }

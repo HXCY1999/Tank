@@ -1,13 +1,23 @@
 package com.tankwar;
 
+import com.alibaba.fastjson.JSON;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Client extends JComponent {
 
@@ -63,10 +73,14 @@ public class Client extends JComponent {
         missiles.add(missile);
     }
 
+    public AidKit getAidKit() {
+        return aidKit;
+    }
+
     public Client() {
         this.playTank = new Tank(400,100,Direction.DOWN,false);
         this.walls = new ArrayList<>();
-        this.aidKit = new AidKit(400,250);
+        this.aidKit = new AidKit(400,250,true);
         // the missile object run in two thread:main and paintComponent thread
         // so use this list to keep its thread safety
         //because the missile is modifying in main thread and be written in another thread
@@ -92,6 +106,7 @@ public class Client extends JComponent {
         }
     }
 
+    private static final Random  RANDOM = new Random();
     @Override
     protected void paintComponent(Graphics g) {
         //draw background
@@ -116,8 +131,14 @@ public class Client extends JComponent {
             g.drawImage(Tools.getImage("tree.png"),720,10,null);
             g.drawImage(Tools.getImage("tree.png"),10,520,null);
 
+            //if tank is dying we need a aid kit.
+            //randomly appear can manually control Probability
+            if(playTank.isDying() && RANDOM.nextInt(4) < 3){
+                aidKit.setLive(true);
+            }
+
             //draw aid kit
-            if(aidKit.isLive()) aidKit.draw(g);
+            if(aidKit.isLive() ) aidKit.draw(g);
             //draw player tank
             if (playTank.isLive()) playTank.draw(g);
             //draw enemy tanks
@@ -165,6 +186,22 @@ public class Client extends JComponent {
         frame.setVisible(true);
         //set frame to the center of window
         frame.setLocationRelativeTo(null);
+
+        //
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    client.save();
+                } catch (IOException ioException) {
+                    JOptionPane.showMessageDialog(null,
+                            "Fail to save current game","Oops! Error Occurred!",JOptionPane.ERROR_MESSAGE);
+                }
+                System.exit(0);
+            }
+        });
+
+
         //add keyboard listener
         frame.addKeyListener(new KeyAdapter() {
             @Override
@@ -191,6 +228,17 @@ public class Client extends JComponent {
                 e.printStackTrace();
             }
 
+        }
+    }
+
+     void save() throws IOException {
+        Save save = new Save(playTank.isLive(), playTank.getPosition(),
+                enemyTank.stream().filter(e -> !e.isLive())
+                        .map(Tank::getPosition).collect(Collectors.toList()));
+
+        try(PrintWriter out =
+                    new PrintWriter(new BufferedWriter(new FileWriter("game.sav")))){
+            out.println(JSON.toJSONString(save,true));
         }
     }
 
