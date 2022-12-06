@@ -28,9 +28,9 @@ public class Client extends JComponent {
 
     private AidKit aidKit;
 
-    private final int WIDTH = 1000;
+    public static final int WIDTH = 1000;
 
-    private final int HEIGHT = 1000;
+    public static final int HEIGHT = 1000;
 
     private Tank playTank;
 
@@ -182,7 +182,7 @@ public class Client extends JComponent {
         JFrame frame = new JFrame();
         frame.setTitle("The most boring Tank Game!");
         //add icon to frame window
-        frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
+        frame.setIconImage(new ImageIcon("assets/images/icon.ico").getImage());
         //add window to frame
         Client client =Client.getInstance();
         frame.add(client);

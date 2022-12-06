@@ -51,7 +51,7 @@ public class Missile {
     public void draw(Graphics g) {
         move();
 
-        if(x < 0 || x > 800 || y < 0 || y > 600) {// boundary of frame
+        if(x < 0 || x > Client.WIDTH || y < 0 || y > Client.HEIGHT) {// boundary of frame
             setLive(false);
             return;//stop drawing
         }
