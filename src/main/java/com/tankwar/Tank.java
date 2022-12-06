@@ -200,22 +200,32 @@ public class Tank {
         }
     }
 
-    private boolean up = false, down = false, left = false, right = false;
+    Tank(Save.Position position, boolean isEnemy){
+        this(position.getX(),position.getY(),position.getDirection(),isEnemy);
+    }
+
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()){
-            case  KeyEvent.VK_UP: up = true;
+            case  KeyEvent.VK_UP: code |= Direction.UP.code;break;
+            case  KeyEvent.VK_DOWN: code |= Direction.DOWN.code;
                 break;
-            case  KeyEvent.VK_DOWN: down = true;
+            case  KeyEvent.VK_LEFT: code |= Direction.LEFT.code;
                 break;
-            case  KeyEvent.VK_LEFT: left = true;
-                break;
-            case  KeyEvent.VK_RIGHT: right = true;
+            case  KeyEvent.VK_RIGHT: code |= Direction.RIGHT.code;
                 break;
             case KeyEvent.VK_CONTROL:fire(); break;
             case KeyEvent.VK_A:superFire(); break;
             case KeyEvent.VK_F2:Client.getInstance().restart();break;
         }
 
+    }
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()){
+            case  KeyEvent.VK_UP: code ^= Direction.UP.code;break;
+            case  KeyEvent.VK_DOWN: code ^= Direction.DOWN.code;break;
+            case  KeyEvent.VK_LEFT: code ^= Direction.LEFT.code;break;
+            case  KeyEvent.VK_RIGHT: code ^= Direction.RIGHT.code;break;
+        }
     }
     private void superFire() {
         for (Direction direction : Direction.values()) {
@@ -239,30 +249,36 @@ public class Tank {
 
     private boolean stopped = false;
 
-    private void determineDirection(){
+    private int code;
 
-        //initially set the tank still not move automatically
-        if(!up && !right && !down && !left) this.stopped = true;
-        else {
-            if (up && left && !down && !right) this.direction = Direction.LEFT_UP;
-            if (up && right && !left && !down) this.direction = Direction.RIGHT_UP;
-            if (down && left && !up && !right) this.direction = Direction.LEFT_DOWN;
-            if (down && right && !up && !left) this.direction = Direction.RIGHT_DOWN;
-            if (up && !left && !down && !right) this.direction = Direction.UP;
-            if (!up && left && !down && !right) this.direction = Direction.LEFT;
-            if (!up && !left && down && !right) this.direction = Direction.DOWN;
-            if (!up && !left && !down && right) this.direction = Direction.RIGHT;
+    private void determineDirection(){
+        Direction newDirection = Direction.get(code);
+        if(newDirection == null){
+            //initially set the tank still not move automatically
+            this.stopped = true;
+        }
+        else{
+            this.direction = newDirection;
             this.stopped = false;
         }
+
+
+//
+//
+//        if(!up && !right && !down && !left) this.stopped = true;
+//        else {
+//            if (up && left && !down && !right) this.direction = Direction.LEFT_UP;
+//            if (up && right && !left && !down) this.direction = Direction.RIGHT_UP;
+//            if (down && left && !up && !right) this.direction = Direction.LEFT_DOWN;
+//            if (down && right && !up && !left) this.direction = Direction.RIGHT_DOWN;
+//            if (up && !left && !down && !right) this.direction = Direction.UP;
+//            if (!up && left && !down && !right) this.direction = Direction.LEFT;
+//            if (!up && !left && down && !right) this.direction = Direction.DOWN;
+//            if (!up && !left && !down && right) this.direction = Direction.RIGHT;
+//            this.stopped = false;
+//        }
     }
-    public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()){
-            case  KeyEvent.VK_UP: up = false; break;
-            case  KeyEvent.VK_DOWN: down = false; break;
-            case  KeyEvent.VK_LEFT: left = false; break;
-            case  KeyEvent.VK_RIGHT: right = false; break;
-        }
-    }
+
 
     private final Random random = new Random();
 

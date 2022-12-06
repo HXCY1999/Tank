@@ -1,6 +1,7 @@
 package com.tankwar;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,10 +9,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -29,7 +28,13 @@ public class Client extends JComponent {
 
     private AidKit aidKit;
 
+    private final int WIDTH = 1000;
+
+    private final int HEIGHT = 1000;
+
     private Tank playTank;
+
+    private final String GAME_SAVE = "game.sav";
 
     public Tank getPlayTank() {
         return playTank;
@@ -89,11 +94,11 @@ public class Client extends JComponent {
         walls.add(new Wall(280,140,true,12));
         walls.add(new Wall(280,540,true,12));
         walls.add(new Wall(100,160,false,12));
-        walls.add(new Wall(700,160,false,12));
+        walls.add(new Wall(800,160,false,12));
         //initiate the enemy tanks
         initiateEnemyTank();
         //set the window dimension
-        this.setPreferredSize(new Dimension(800,600));
+        this.setPreferredSize(new Dimension(1000,600));
     }
 
     private void initiateEnemyTank() {
@@ -111,15 +116,16 @@ public class Client extends JComponent {
     protected void paintComponent(Graphics g) {
         //draw background
         g.setColor(Color.BLACK);
-        g.fillRect(0,0,800,600);
+
+        g.fillRect(0,0, WIDTH,HEIGHT);
 
 
         if(!playTank.isLive()){
             g.setColor(Color.RED );
             g.setFont(new Font(null,Font.BOLD,100));
-            g.drawString("GAME OVER",100,200);
+            g.drawString("GAME OVER",200,300);
             g.setFont(new Font(null,Font.BOLD,60));
-            g.drawString("PRESS F2 TO RESTART",60,360);
+            g.drawString("PRESS F2 TO RESTART",160,420);
         }else {
             g.setColor(Color.white);
             g.setFont(new Font(null,Font.BOLD,16));
@@ -171,7 +177,7 @@ public class Client extends JComponent {
 
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         com.sun.javafx.application.PlatformImpl.startup(()->{});
         JFrame frame = new JFrame();
         frame.setTitle("The most boring Tank Game!");
@@ -214,6 +220,9 @@ public class Client extends JComponent {
             }
         });
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);//end the program as the window closes
+
+        client.load();
+
         while (true) {
 //            System.out.println(Thread.currentThread().getName());
             try {
@@ -231,13 +240,29 @@ public class Client extends JComponent {
         }
     }
 
-     void save() throws IOException {
+    private void load() throws IOException {
+        File file = new File(GAME_SAVE);
+
+        if(file.exists() && file.isFile()){
+            String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            Save save = JSON.parseObject(json,Save.class);
+            if(save.isGameContinued()){
+                this.playTank = new Tank(save.getPosition(),false);
+
+                this.enemyTank.clear();
+
+            }
+        }
+    }
+
+    void save() throws IOException {
         Save save = new Save(playTank.isLive(), playTank.getPosition(),
-                enemyTank.stream().filter(e -> !e.isLive())
+                enemyTank.stream().filter(Tank::isLive)
                         .map(Tank::getPosition).collect(Collectors.toList()));
 
+
         try(PrintWriter out =
-                    new PrintWriter(new BufferedWriter(new FileWriter("game.sav")))){
+                    new PrintWriter(new BufferedWriter(new FileWriter(GAME_SAVE)))){
             out.println(JSON.toJSONString(save,true));
         }
     }
